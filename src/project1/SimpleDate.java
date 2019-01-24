@@ -62,11 +62,22 @@ public class SimpleDate{
 	 * represent a valid date.
 	 ****************************************************************/
 	public SimpleDate (String date) {
-		String[] parts = date.split("/");
-		month = Integer.parseInt(parts[0]);
-		day = Integer.parseInt(parts[1]);
-		year = Integer.parseInt(parts[2]);
-		this.simpleDateCount++;
+	    if(date != null && !date.equals("")) {
+            String[] parts = date.split("/");
+            if(parts.length == 3) {
+                month = Integer.parseInt(parts[0]);
+                day = Integer.parseInt(parts[1]);
+                year = Integer.parseInt(parts[2]);
+                if(checkValidDate(this))
+                    this.simpleDateCount++;
+                else
+                    throw new IllegalArgumentException();
+            }
+            else
+                throw new IllegalArgumentException();
+        }
+        else
+            throw new IllegalArgumentException();
 		}
 
 	/******************************************************************
@@ -82,50 +93,68 @@ public class SimpleDate{
 		this.month = month;
 		this.day = day;
 		this.year = year;
-		this.simpleDateCount++;
+		if(checkValidDate(this))
+		    this.simpleDateCount++;
+		else
+		    throw new IllegalArgumentException();
 	}
 
 	public SimpleDate (SimpleDate other) {
-		this.day = other.day;
-		this.year = other.year;
-		this.month = other.month;
-		this.simpleDateCount++;
+		if(checkValidDate(other)){
+            this.day = other.day;
+            this.year = other.year;
+            this.month = other.month;
+            this.simpleDateCount++;
+        }
+        else
+            throw new IllegalArgumentException();
+
+
 
 	}
+
+	public boolean checkValidDate(SimpleDate date){
+	    try {
+            if (date.getMonth() > 12 || date.getMonth() < 1)
+                throw new IllegalArgumentException();
+            else if (date.getDay() < 1 || date.getDay() > SimpleDate.daysInMonth(date.getMonth(), date.getYear()))
+                throw new IllegalArgumentException();
+            else if (date.getYear() < 1753)
+                throw new IllegalArgumentException();
+            else
+                return true;
+        }
+	    catch(IllegalArgumentException e){
+	        return false;
+        }
+    }
 
 	public int getMonth() {
 		return month;
-	}
-
-	public void setMonth(int month) {
-		this.month = month;
 	}
 
 	public int getDay() {
 		return day;
 	}
 
-	public void setDay(int day) {
-		this.day = day;
-	}
-
 	public int getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
-		this.year = year;
-	}
-
-
-	private  int daysInMonth(int month, int year) {
-		if (month == 2 && isLeapYear(year)) {
-			return 29;
-		}
-		return DAYS_IN_MONTH[month];
+	public static int daysInMonth(int month, int year) {
+	    if(month > 12 || month < 1 || year < 1700)
+        {
+            throw new IllegalArgumentException();
+        }
+        if (month == 2 && isLeapYear(year)) {
+            return 29;
+        }
+        return DAYS_IN_MONTH[month];
 	}
 
 	public static boolean isLeapYear(int year) {
+	    if(year < 1700)
+	        throw new IllegalArgumentException();
 		return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 	}
 
@@ -156,23 +185,24 @@ public class SimpleDate{
     }
 
 	public int compareTo(SimpleDate other){
-
-		if (this.year > other.year)
-			return 1;
-		else if (this.year < other.year)
-			return -1;
-		else if (this.year == other.year)
-		    if(this.month > other.month)
-		        return 1;
-            else if (this.month <other.month)
+        if(checkValidDate(other)) {
+            if (this.year > other.year)
+                return 1;
+            else if (this.year < other.year)
                 return -1;
-            else if(this.month == other.month)
-                if(this.day > other.day)
+            else if (this.year == other.year)
+                if (this.month > other.month)
                     return 1;
-                else if(this.day < other.day)
+                else if (this.month < other.month)
                     return -1;
-                else if(this.day == other.day)
-                    return 0;
+                else if (this.month == other.month)
+                    if (this.day > other.day)
+                        return 1;
+                    else if (this.day < other.day)
+                        return -1;
+                    else if (this.day == other.day)
+                        return 0;
+        }
         throw new IllegalArgumentException();
 	}
 
@@ -269,6 +299,9 @@ public class SimpleDate{
     }
 
 	public void save (String fileName) {
+        if(fileName.equals("")|| fileName.equals(null)){
+            throw new IllegalArgumentException();
+        }
 		PrintWriter out = null;
 		try{
 			out = new PrintWriter(new BufferedWriter(
@@ -278,7 +311,8 @@ public class SimpleDate{
 			throw new IllegalArgumentException();
 		}
 
-		out.println(""+this.month+"/"+this.day+"/"+this.year);
+		out.println(
+		        "" + this.month + "/" + this.day + "/" + this.year);
 		out.close();
 	}
 
@@ -286,11 +320,11 @@ public class SimpleDate{
 		StringBuffer text;
 
 		try{
+		    if(fileName.equals("")|| fileName.equals(null)){
+		        throw new IllegalArgumentException();
+            }
 			Scanner fileReader  = new Scanner(new File (fileName));
 			text = new StringBuffer(fileReader.next());
-			while(fileReader.hasNext()){
-				text.append(fileReader.next());
-			}
 
 			//with text file information create a new date object
 			//constructor will error test the date
