@@ -268,11 +268,43 @@ public class SimpleDate{
     }
 
 	public void save (String fileName) {
-		// your code goes here
+		PrintWriter out = null;
+		try{
+			out = new PrintWriter(new BufferedWriter(
+					new FileWriter(fileName)));
+		}
+		catch (IOException e){
+			throw new IllegalArgumentException();
+		}
+
+		out.println(""+this.month+"/"+this.day+"/"+this.year);
+		out.close();
 	}
 
 	public void load (String fileName) {
-	// your code goes here
+		StringBuffer text;
+
+		try{
+			Scanner fileReader  = new Scanner(new File (fileName));
+			text = new StringBuffer(fileReader.next());
+			while(fileReader.hasNext()){
+				text.append(fileReader.next());
+			}
+
+			//with text file information create a new date object
+			//constructor will error test the date
+			SimpleDate s1 = new SimpleDate(text.toString());
+
+			//after confirming date, save date to "this" object
+			this.month = s1.month;
+			this.day = s1.day;
+			this.year = s1.year;
+		}
+
+		catch(Exception e)
+		{
+			throw new IllegalArgumentException();
+		}
 	}
 
 
