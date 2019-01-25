@@ -367,6 +367,31 @@ public class SimpleDate{
             return false;
     }
 
+    public int daysSince (SimpleDate other)
+			throws IllegalArgumentException{
+		int days = 0;
+		SimpleDate temp;
+
+		if(!checkValidDate(this)||!checkValidDate(other)){
+			throw new IllegalArgumentException();
+		}
+		temp = new SimpleDate(this);
+		int direction = temp.compareTo(other);
+		if(direction > 0){
+			while(temp.compareTo(other) == 1){
+				temp.decrement();
+				days++;
+			}
+		}
+		else if(direction < 0){
+			while(temp.compareTo(other) == -1){
+				temp.increment();
+				days--;
+			}
+		}
+		return days;
+	}
+
 	public void save (String fileName) {
         if(fileName.equals("")|| fileName.equals(null)){
             throw new IllegalArgumentException();

@@ -554,4 +554,60 @@ public class SimpleDateTest {
         SimpleDate d1 = new SimpleDate();
         SimpleDate d2 = d1.daysFromNow(12);
     }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testDaysFromNowDateToSmall() {
+        SimpleDate d1 = new SimpleDate(1,1,1753);
+        SimpleDate d2 = d1.daysFromNow(-12);
+    }
+
+    @Test
+    public void testDaysSincePositive(){
+        SimpleDate d1 = new SimpleDate(1,5,2020);
+        SimpleDate d2 = new SimpleDate(1,1,2020);
+        int days = d1.daysSince(d2);
+        Assert.assertEquals("Days from since the first is 4",
+                4,days);
+    }
+
+    @Test
+    public void testDaysSinceNegative(){
+        SimpleDate d1 = new SimpleDate(1,5,2020);
+        SimpleDate d2 = new SimpleDate(1,1,2020);
+        int days = d2.daysSince(d1);
+        Assert.assertEquals("Days from since the first is -4",
+                -4,days);
+    }
+
+    @Test
+    public void testDaysSinceSameDay(){
+        SimpleDate d1 = new SimpleDate(1,5,2020);
+        SimpleDate d2 = new SimpleDate(1,1,2020);
+        int days = d1.daysSince(d1);
+        Assert.assertEquals("Days from since the first is 0",
+                0,days);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testDaysSinceDefaultConstructorThis(){
+        SimpleDate d1 = new SimpleDate();
+        SimpleDate d2 = new SimpleDate(1,1,2020);
+        int days = d1.daysSince(d2);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testDaysSinceDefaultConstructorOther(){
+        SimpleDate d1 = new SimpleDate(1,1,2020);
+        SimpleDate d2 = new SimpleDate();
+        int days = d1.daysSince(d2);
+    }
+
+    @Test
+    public void testDaysSinceLeapYearYear(){
+        SimpleDate d1 = new SimpleDate(1,1,2021);
+        SimpleDate d2 = new SimpleDate(1,1,2020);
+        int days = d1.daysSince(d2);
+        Assert.assertEquals("Leap Year 366 days since other",
+                366,days);
+    }
 }
