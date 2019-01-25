@@ -246,6 +246,31 @@ public class SimpleDate{
         return daySince;
     }
 
+    public SimpleDate daysFromNow(int n)
+			throws IllegalArgumentException{
+		SimpleDate newDate;
+
+		//"this" is not a SimpleDate created with default constructor
+		if(checkValidDate(this))
+			newDate = new SimpleDate(this);
+		else
+			throw new IllegalArgumentException();
+
+		//increment newDate until the count is satisfied
+		if(n > 0){
+			for(int i = 0; i < n; i++){
+				newDate.increment();
+			}
+		}
+		//decrement newDate until the count is satisfied
+		else if(n < 0){
+			for(int i = 0; i > n; i--){
+				newDate.decrement();
+			}
+		}
+		return newDate;
+	}
+
     public void increment(){
 	    if(this.endOfYear()){
 	        this.month = 1;
@@ -260,6 +285,50 @@ public class SimpleDate{
             this.day++;
         }
     }
+
+    public void decrement() throws IllegalArgumentException{
+		if(this.startOfYear()){
+			this.month = 12;
+			this.day = SimpleDate.DAYS_IN_MONTH[12];
+			this.year--;
+		}
+		else if(this.startOfMonth()){
+			if(this.month == 3 && SimpleDate.isLeapYear(this.year)){
+				this.month = 2;
+				this.day = 29;
+			}
+			else if(this.month == 3 && !SimpleDate.isLeapYear(this.year)){
+				this.month--;
+				this.day = 28;
+			}
+			else{
+				this.month--;
+				this.day = SimpleDate.DAYS_IN_MONTH[this.month];
+			}
+		}
+		else{
+			this.day--;
+		}
+
+		//check to make sure date is still valid
+		if(!checkValidDate(this)){
+			throw new IllegalArgumentException();
+		}
+	}
+
+    private boolean startOfMonth(){
+		if(this.day == 1)
+			return true;
+		else
+			return false;
+	}
+
+	private boolean startOfYear(){
+		if(this.month ==1 && this.day == 1)
+			return true;
+		else
+			return false;
+	}
 
     private boolean endOfMonth(){
 

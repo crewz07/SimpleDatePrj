@@ -458,4 +458,100 @@ public class SimpleDateTest {
         SimpleDate s2 = new SimpleDate();
         s1.compareTo(s2);
     }
+
+    @Test
+    public void testDecrement(){
+        SimpleDate s1 = new SimpleDate(1,23,2019);
+        s1.decrement();
+        Assert.assertEquals("Month should be unchanged",
+                1,s1.getMonth());
+        Assert.assertEquals("Day should be 22",
+                22,s1.getDay());
+        Assert.assertEquals("Year should be unchanged",
+                2019,s1.getYear());
+    }
+
+    @Test
+    public void testDecrementEndOfMonth(){
+        SimpleDate s1 = new SimpleDate(2,1,2019);
+        s1.decrement();
+        Assert.assertEquals("Month should be 1",
+                1,s1.getMonth());
+        Assert.assertEquals("Day should be 31",
+                31,s1.getDay());
+        Assert.assertEquals("Year should be unchanged",
+                2019,s1.getYear());
+    }
+
+    @Test
+    public void testDecrementEndOfMonthMarchLeapYear(){
+        SimpleDate s1 = new SimpleDate(3,1,2020);
+        s1.decrement();
+        Assert.assertEquals("Month should be 2",
+                2,s1.getMonth());
+        Assert.assertEquals("Day should be 29 for leap year",
+                29,s1.getDay());
+        Assert.assertEquals("Year should be unchanged",
+                2020,s1.getYear());
+    }
+
+    @Test
+    public void testDecrementEndOfMonthMarchNotLeapYear(){
+        SimpleDate s1 = new SimpleDate(3,1,2019);
+        s1.decrement();
+        Assert.assertEquals("Month should be 2",
+                2,s1.getMonth());
+        Assert.assertEquals("Day should be 28 for not leap year",
+                28,s1.getDay());
+        Assert.assertEquals("Year should be unchanged",
+                2019,s1.getYear());
+    }
+
+    @Test
+    public void testDecrementEndOfYear(){
+        SimpleDate s1 = new SimpleDate(1,1,1754);
+        s1.decrement();
+        Assert.assertEquals("Month should be 12",
+                12,s1.getMonth());
+        Assert.assertEquals("Day should be 31 for not leap year",
+                31,s1.getDay());
+        Assert.assertEquals("Year should be 1753",
+                1753,s1.getYear());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testDecrementDateToSmall(){
+        SimpleDate s1 = new SimpleDate(1,1,1753);
+        s1.decrement();
+    }
+
+    @Test
+    public void testDaysFromNowIncrement(){
+        SimpleDate d1 = new SimpleDate(2,28,2020);
+        SimpleDate d2 = d1.daysFromNow(5);
+        Assert.assertEquals("The Month should be 3",
+                3,d2.getMonth());
+        Assert.assertEquals("Day should be 4",
+                4,d2.getDay());
+        Assert.assertEquals("The year should be be unchanged",
+                2020,d2.getYear());
+    }
+
+    @Test
+    public void testDaysFromNowDecrement(){
+        SimpleDate d1 = new SimpleDate(1,2,2020);
+        SimpleDate d2 = d1.daysFromNow(-5);
+        Assert.assertEquals("The Month should be 12",
+                12,d2.getMonth());
+        Assert.assertEquals("Day should be 28",
+                28,d2.getDay());
+        Assert.assertEquals("The year should be be 2019",
+                2019,d2.getYear());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testDaysFromNowDefaultConstructor(){
+        SimpleDate d1 = new SimpleDate();
+        SimpleDate d2 = d1.daysFromNow(12);
+    }
 }
