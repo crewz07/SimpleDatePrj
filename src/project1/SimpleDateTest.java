@@ -64,7 +64,7 @@ public class SimpleDateTest {
     // must use separate test cases for each error
     @Test(expected = IllegalArgumentException.class)
     public void testIncorrectYear() {
-        SimpleDate d1 = new SimpleDate("3/1/1700");
+        SimpleDate d1 = new SimpleDate("1/1/1700");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -435,6 +435,16 @@ public class SimpleDateTest {
         s2.load("");
     }
 
+    /******************************************************************
+     * This only works if file s2.txt exists in src,
+     * and contains bad date format
+     *****************************************************************/
+    @Test (expected = IllegalArgumentException.class)
+    public void loadBadDate(){
+        SimpleDate s2 = new SimpleDate();
+        s2.load("s2.txt");
+    }
+
     @Test (expected = IllegalArgumentException.class)
     public void testDaysInMonthException(){
         SimpleDate.daysInMonth(13,1699);
@@ -609,5 +619,10 @@ public class SimpleDateTest {
         int days = d1.daysSince(d2);
         Assert.assertEquals("Leap Year 366 days since other",
                 366,days);
+    }
+
+    @Test
+    public void checkValidDate(){
+
     }
 }
