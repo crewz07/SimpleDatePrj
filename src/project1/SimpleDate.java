@@ -60,12 +60,20 @@ public class SimpleDate {
      * represent a valid date.
      ****************************************************************/
     public SimpleDate(String date) {
+
+        //check for valid date
         if (date != null && !date.equals("")) {
+
+            //split parts on /
             String[] parts = date.split("/");
             if (parts.length == 3) {
+
+                //assign member fields values of input parameter
                 month = Integer.parseInt(parts[0]);
                 day = Integer.parseInt(parts[1]);
                 year = Integer.parseInt(parts[2]);
+
+                //check if this is a valid date
                 if (checkValidDate(this))
                     this.simpleDateCount++;
                 else
