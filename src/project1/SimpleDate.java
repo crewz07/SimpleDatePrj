@@ -1,14 +1,13 @@
 package project1;
 import java.util.*;
 import java.io.*;
-/**
- * Stores and analyzes calendar dates.  THIS IS A HELPER CLASS, PLEASE
- * CREATE A SEPARATE CLASS NAMED: SimpleDate.java
+/**********************************************************************
+ * Stores and analyzes calendar dates.
+ * Valid dates are from 1/1/1753 and onward
  *
  * @author Andrew Kruse
  * @version 1/30/2019
- */
-
+ *********************************************************************/
 public class SimpleDate{
 
 	/** month represents the current month */
@@ -20,18 +19,14 @@ public class SimpleDate{
 	/** year represents the current year */
 	private int year;
 
-    public static int getSimpleDateCount() {
-        return simpleDateCount;
-    }
-
     /**counts number of SimpleDate objects created */
 	private static int simpleDateCount = 0;
 
-    // Days in each month assuming months are numbered beginning with 1
+    /** Days in each month, months are numbered beginning with 1*/
     private static final int[] DAYS_IN_MONTH =
 			{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    //Names of month, assuming months are numbered beginning with a 1
+    /**Names of month, months are numbered beginning with a 1*/
     private static final String[] MONTHS =
             {"","January","February","March","April","May","June",
             "July","August","September","October","November",
@@ -39,6 +34,7 @@ public class SimpleDate{
 
     private static final int NUM_MONTHS = 12;
     private static final int DAYS_YEAR = 365;
+    private static final int DAYS_LEAP_YEAR = 366;
     public static final int MIN_YEAR = 1753;
     private static int counter = 0;
 
@@ -53,9 +49,12 @@ public class SimpleDate{
 		this.year = 0;
 		this.simpleDateCount++;
 	}
+
+
 	/******************************************************************
 	 * A constructor that accepts a string that represents
-	 * a date
+	 * a date and breaks into integer dates based on / deliminator
+     * Checks to make sure date is valid
      *
 	 * @param date A string that represents a date
 	 * @throws IllegalArgumentException if parameter doesn't
@@ -80,9 +79,11 @@ public class SimpleDate{
             throw new IllegalArgumentException();
 		}
 
+
 	/******************************************************************
-	 * Constructor taking month, day, and year as integers.
-	 *
+	 * Constructor taking month, day, and year as integers. Checks to
+     * see if date is valid
+     *
 	 * @param month the month
 	 * @param day   the day
 	 * @param year  the year
@@ -99,6 +100,14 @@ public class SimpleDate{
 		    throw new IllegalArgumentException();
 	}
 
+
+    /******************************************************************
+     * Constructor coping member fields of SimpleDate parameter
+     * Checks to make sure new date is valid.
+     *
+     * @param other SimpleDate object being copied
+     * @throws IllegalArgumentException if input is not a valid date
+     *****************************************************************/
 	public SimpleDate (SimpleDate other) {
 		if(checkValidDate(other)){
             this.day = other.day;
@@ -108,18 +117,25 @@ public class SimpleDate{
         }
         else
             throw new IllegalArgumentException();
-
-
-
 	}
 
-	public boolean checkValidDate(SimpleDate date){
+
+    /******************************************************************
+     * Checks to see if parameter is a valid date, later than 1,1,1753
+     *
+     * @param date SimpleDate object
+     * @return boolean value depending on if parameter is a valid date
+     * @throws IllegalArgumentException if para is not valid date
+     *****************************************************************/
+	public boolean checkValidDate(SimpleDate date) {
 	    try {
-            if (date.getMonth() > 12 || date.getMonth() < 1)
+            if (date.getMonth() > NUM_MONTHS || date.getMonth() < 1)
                 throw new IllegalArgumentException();
-            else if (date.getDay() < 1 || date.getDay() > SimpleDate.daysInMonth(date.getMonth(), date.getYear()))
+            else if (date.getDay() < 1 || date.getDay() >
+                    SimpleDate.daysInMonth(date.getMonth(),
+                            date.getYear()))
                 throw new IllegalArgumentException();
-            else if (date.getYear() < 1753)
+            else if (date.getYear() < MIN_YEAR)
                 throw new IllegalArgumentException();
             else
                 return true;
@@ -129,44 +145,120 @@ public class SimpleDate{
         }
     }
 
+
+    /******************************************************************
+     * Return value of month field
+     *
+     * @return month integer value of current month
+     *****************************************************************/
 	public int getMonth() {
 		return month;
 	}
 
+
+    /******************************************************************
+     * Return value of day field
+     *
+     * @return day integer value of current day
+     *****************************************************************/
 	public int getDay() {
 		return day;
 	}
 
+
+    /******************************************************************
+     * Return value of year field
+     *
+     * @return year integer value of current year
+     *****************************************************************/
 	public int getYear() {
 		return year;
 	}
 
+
+    /******************************************************************
+     * Return number of simple date objects created
+     *
+     * @return SimpleDateCount integer amount of simple date objects
+     *****************************************************************/
+    public static int getSimpleDateCount() {
+        return simpleDateCount;
+    }
+
+
+    /******************************************************************
+     * Returns the number of days in month
+     * Leap year is taken into consideration
+     *
+     * @return DAYS_IN_MONTH[i] integer value of days in current month
+     * @throws IllegalArgumentException if para not valid data members
+     *****************************************************************/
 	public static int daysInMonth(int month, int year) {
-	    if(month > 12 || month < 1 || year < 1700)
+
+	    //check for valid parameter input
+	    if(month > NUM_MONTHS || month < 1 || year < 1753)
         {
             throw new IllegalArgumentException();
         }
+
+        //check if month is February and leap year, return 29 if true
         if (month == 2 && isLeapYear(year)) {
             return 29;
         }
+
+        //return days in month from array if not leap year and Feb
         return DAYS_IN_MONTH[month];
 	}
 
+
+    /******************************************************************
+     * Determines if the parameter was a leap year, if the year is a
+     * valid date's year
+     *
+     * @return boolean value dependent upon status of leap year
+     * @throws IllegalArgumentException if year is invalid
+     *****************************************************************/
 	public static boolean isLeapYear(int year) {
-	    if(year < 1700)
+
+	    //ensure valid date year
+	    if(year < 1753)
 	        throw new IllegalArgumentException();
+
+	    //return leap year if parameter qualifies as leap year
 		return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 	}
 
+
+    /******************************************************************
+     * Calls static method to see if is leap year
+     *
+     * @return boolean value dependent on if this date is leap year
+     *****************************************************************/
 	public boolean isLeapYear() {
 		return isLeapYear(this.year);
 	}
 
+
+    /******************************************************************
+     * to string object that returns full word Month Day, Year
+     *
+     * @return Formatted String of this objects date
+     *****************************************************************/
 	public String toString() {
 	    return String.format("%s %02d, %4d",
                 MONTHS[this.month],this.day,this.year);
 	}
 
+
+    /******************************************************************
+     * Override equals method, checks if date member fields match
+     * parameters member fields, checks to make sure other is of
+     * SimpleDate object type
+     *
+     * @param other
+     * @return boolean value dependent upon if member fields match
+     * @throws IllegalArgumentException if other is not a SimpleDate
+     *****************************************************************/
 	public boolean equals(Object other) {
 		if(other instanceof SimpleDate) {
 			SimpleDate temp = (SimpleDate) other;
@@ -179,11 +271,31 @@ public class SimpleDate{
 		throw new IllegalArgumentException();
 	}
 
-	public static boolean equals(SimpleDate s1, SimpleDate s2)
+
+    /******************************************************************
+     * Static equals override method, calls parameter date1 member
+     * function equals, passing date2.
+     *
+     * @param date1 SimpleDate used to compare member fields
+     * @param date2 SimpleDate member field being compared too
+     * @return boolean value dependent up if member fields are equal
+     *****************************************************************/
+	public static boolean equals(SimpleDate date1, SimpleDate date2)
     {
-       return s1.equals(s2);
+       return date1.equals(date2);
     }
 
+
+    /******************************************************************
+     * Compares date object to input parameter to give reference of
+     * which date occured chronologically first. Returns 1 if this
+     * object occured second, returns -1 if this object occured first,
+     * returns zero if dates are chronologically the same
+     *
+     * @param other SimpleDate to determine chronological precedence
+     * @return integer value depending up which date came first
+     * @throws IllegalArgumentException if other is not a valid date
+     *****************************************************************/
 	public int compareTo(SimpleDate other){
         if(checkValidDate(other)) {
             if (this.year > other.year)
@@ -206,13 +318,26 @@ public class SimpleDate{
         throw new IllegalArgumentException();
 	}
 
+
+    /******************************************************************
+     * Returns number of days in this current year
+     *
+     * @return integer number of day in year or Leap Year
+     *****************************************************************/
 	public int daysInYear(){
 	    if(this.isLeapYear())
-	        return 366;
+	        return DAYS_LEAP_YEAR;
         else
-            return 365;
+            return DAYS_YEAR;
     }
 
+
+    /******************************************************************
+     *A method that returns the number of days at the beginning of the
+     * “this” year.  For example: “2/10/2013” returns 41.
+     *
+     * @return daySince integer number of days since beginning of year
+     *****************************************************************/
     public int ordinalDate(){
 
 	    int daySince = 0;
@@ -246,31 +371,46 @@ public class SimpleDate{
         return daySince;
     }
 
+
+    /******************************************************************
+     *returns a new SimpleDate object representing the date input para
+     * days from now
+     *
+     * @param n number of days from this date
+     * @return newDate SimpleDate n days later than this
+     * @throws IllegalArgumentException if this is not valid date
+     *****************************************************************/
     public SimpleDate daysFromNow(int n)
 			throws IllegalArgumentException{
-		SimpleDate newDate;
+        SimpleDate newDate;
 
-		//"this" is not a SimpleDate created with default constructor
-		if(checkValidDate(this))
-			newDate = new SimpleDate(this);
-		else
-			throw new IllegalArgumentException();
+        //"this" is not a SimpleDate created with default constructor
+        if(checkValidDate(this))
+            newDate = new SimpleDate(this);
+        else
+            throw new IllegalArgumentException();
 
-		//increment newDate until the count is satisfied
-		if(n > 0){
-			for(int i = 0; i < n; i++){
-				newDate.increment();
-			}
-		}
-		//decrement newDate until the count is satisfied
-		else if(n < 0){
-			for(int i = 0; i > n; i--){
-				newDate.decrement();
-			}
-		}
-		return newDate;
-	}
+        //increment newDate until the count is satisfied
+        if(n > 0){
+            for(int i = 0; i < n; i++){
+                newDate.increment();
+            }
+        }
 
+        //decrement newDate until the count is satisfied
+        else if(n < 0){
+            for(int i = 0; i > n; i--){
+                newDate.decrement();
+            }
+        }
+        return newDate;
+    }
+
+
+    /******************************************************************
+     * Increments this day by one day. At end of month or year,
+     * rolls over correct category
+     *****************************************************************/
     public void increment(){
 	    if(this.endOfYear()){
 	        this.month = 1;
@@ -286,6 +426,13 @@ public class SimpleDate{
         }
     }
 
+
+    /******************************************************************
+     * Decrements this day by one day. At beginning of month or year,
+     * rolls over corresponding year
+     *
+     * @throws IllegalArgumentException if date becomes invalid
+     *****************************************************************/
     public void decrement() throws IllegalArgumentException{
 		if(this.startOfYear()){
 			this.month = 12;
@@ -294,12 +441,13 @@ public class SimpleDate{
 		}
 		else if(this.startOfMonth()){
 			if(this.month == 3 && SimpleDate.isLeapYear(this.year)){
-				this.month = 2;
-				this.day = 29;
-			}
-			else if(this.month == 3 && !SimpleDate.isLeapYear(this.year)){
 				this.month--;
-				this.day = 28;
+				this.day = SimpleDate.DAYS_IN_MONTH[this.month] + 1;
+			}
+			else if(this.month == 3 &&
+                    !SimpleDate.isLeapYear(this.year)){
+				this.month--;
+				this.day = SimpleDate.DAYS_IN_MONTH[this.month];
 			}
 			else{
 				this.month--;
@@ -316,6 +464,12 @@ public class SimpleDate{
 		}
 	}
 
+
+    /******************************************************************
+     * Helper method, checks to see if SimpleDate is at start of month
+     *
+     * @return boolean value depending upon if start of month or not
+     *****************************************************************/
     private boolean startOfMonth(){
 		if(this.day == 1)
 			return true;
@@ -323,6 +477,12 @@ public class SimpleDate{
 			return false;
 	}
 
+
+    /******************************************************************
+     * Helper method, checks to see if SimpleDate is at start of year
+     *
+     * @return boolean value depending upon if start of year or not
+     *****************************************************************/
 	private boolean startOfYear(){
 		if(this.month ==1 && this.day == 1)
 			return true;
@@ -330,6 +490,13 @@ public class SimpleDate{
 			return false;
 	}
 
+
+    /******************************************************************
+     * Helper method, checks to see if SimpleDate is at end of month
+     * Takes into account leap years
+     *
+     * @return boolean value depending upon if end of month or not
+     *****************************************************************/
     private boolean endOfMonth(){
 
 	    //if this year is a leap year, February is a special case
@@ -360,6 +527,12 @@ public class SimpleDate{
         }
     }
 
+
+    /******************************************************************
+     * Helper method, checks to see if SimpleDate is at end of year
+     *
+     * @return boolean value depending upon if end of year or not
+     *****************************************************************/
     private boolean endOfYear(){
 	    if(this.month == 12 && this.endOfMonth())
 	        return true;
@@ -367,6 +540,17 @@ public class SimpleDate{
             return false;
     }
 
+
+    /******************************************************************
+     * Calculates the difference in number of days between the dates
+     * if other precedes this, returns a positive integer, if this
+     * precedes other, returns a negative integer
+     *
+     * @param other  SimpleDate object used to calculate difference
+     * @return days number of days difference between two SimpleDates
+     * @throws IllegalArgumentException if either input parameter is
+     * not a valid date
+     *****************************************************************/
     public int daysSince (SimpleDate other)
 			throws IllegalArgumentException{
 		int days = 0;
@@ -392,6 +576,14 @@ public class SimpleDate{
 		return days;
 	}
 
+
+    /******************************************************************
+     * Save this date to a parameter file
+     *
+     * @param fileName string name of file
+     * @throws IllegalArgumentException if file failed to write or
+     * fileName was invalid
+     *****************************************************************/
 	public void save (String fileName) {
         if(fileName.equals("")|| fileName.equals(null)){
             throw new IllegalArgumentException();
@@ -410,6 +602,15 @@ public class SimpleDate{
 		out.close();
 	}
 
+
+    /******************************************************************
+     *Loads SimpleDate object from a txt file specified form the input
+     * parameter
+     *
+     * @param fileName String containing the name of the file
+     * @throws IllegalArgumentException if file name is invalid or
+     * if date being loaded is invalid, or fileRead failed
+     *****************************************************************/
 	public void load (String fileName) {
 		StringBuffer text;
 
@@ -430,8 +631,8 @@ public class SimpleDate{
 			this.year = s1.year;
 		}
 
-		catch(Exception e)
-		{
+		catch(Exception e){
+
 			throw new IllegalArgumentException();
 		}
 	}
